@@ -185,11 +185,13 @@ document.querySelector('#app').innerHTML = `
 
   <section class="trust" aria-label="Service highlights">
     <div class="container trust__inner">
-      <div class="trust__item">${icon.award} Award-Winning Service</div>
-      <div class="trust__item">${icon.shield} Fully Insured & Bonded</div>
-      <div class="trust__item">${icon.leaf} Eco-Friendly Products</div>
-      <div class="trust__item">${icon.clock} Flexible Scheduling</div>
-      <div class="trust__item">${icon.check} Background-Checked Staff</div>
+      <ul class="trust__list">
+        <li class="trust__item">${icon.award} <span>Award-Winning Service</span></li>
+        <li class="trust__item">${icon.shield} <span>Fully Insured & Bonded</span></li>
+        <li class="trust__item">${icon.leaf} <span>Eco-Friendly Products</span></li>
+        <li class="trust__item">${icon.clock} <span>Flexible Scheduling</span></li>
+        <li class="trust__item">${icon.check} <span>Background-Checked Staff</span></li>
+      </ul>
     </div>
   </section>
 
@@ -323,6 +325,9 @@ document.querySelector('#app').innerHTML = `
             <textarea id="cf-message" name="message" class="form-control" placeholder="Tell us about your space, size, and any special requests…" required aria-describedby="err-message"></textarea>
             <span class="form-group__error" id="err-message">${icon.alertCircle} Please enter a message.</span>
           </div>
+          <p class="form-privacy-notice">
+            By submitting this form, your name, email, phone (if provided), service interest, and message will be stored to respond to your inquiry. See our <button type="button" class="link-button" id="formPrivacyLink">Privacy Policy</button> for details.
+          </p>
           <button type="submit" class="btn btn--primary btn--block" id="submitBtn">Send Request</button>
         </form>
       </div>
@@ -358,6 +363,13 @@ document.querySelector('#app').innerHTML = `
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><button class="footer__case-link" id="caseStudyLink2">${icon.arrowRight} View Case Study</button></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Legal</h4>
+          <ul>
+            <li><button class="footer__case-link" id="privacyLink">Privacy Policy</button></li>
+            <li><button class="footer__case-link" id="termsLink">Terms of Service</button></li>
           </ul>
         </div>
         <div class="footer__col">
@@ -464,6 +476,96 @@ document.querySelector('#app').innerHTML = `
     </div>
   </div>
 
+  <!-- Privacy Policy modal -->
+  <div class="modal-backdrop" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacy-title" aria-hidden="true">
+    <div class="modal">
+      <div class="modal__header">
+        <div>
+          <div class="modal__eyebrow">Legal</div>
+          <h2 id="privacy-title">Privacy Policy</h2>
+        </div>
+        <button class="modal__close" id="privacyClose" aria-label="Close privacy policy">${icon.x}</button>
+      </div>
+      <div class="modal__body">
+        <p class="modal__updated">Last updated: October 2026</p>
+        <p class="demo-note" style="margin-bottom:1rem;">${icon.info} <span>This is a demonstration privacy policy for a fictional portfolio website. It is not legal advice and should not be used for a real business without review by a qualified professional.</span></p>
+
+        <h3>Overview</h3>
+        <p>NorthStar Cleaning ("we", "us") is a fictional business name used solely for this portfolio demonstration. This privacy policy describes how data submitted through this website's contact form is handled.</p>
+
+        <h3>Data We Collect</h3>
+        <p>When you submit the contact form, we collect the following information:</p>
+        <ul>
+          <li><strong>Name</strong> — to address you in our response.</li>
+          <li><strong>Email</strong> — to reply to your inquiry.</li>
+          <li><strong>Phone</strong> (optional) — in case you prefer a call.</li>
+          <li><strong>Service of interest</strong> (optional) — to tailor our response.</li>
+          <li><strong>Message</strong> — the details of your inquiry.</li>
+        </ul>
+        <p>We do not collect data through cookies, analytics, tracking pixels, or third-party advertising scripts. This website does not use local storage or session storage.</p>
+
+        <h3>How We Use Your Data</h3>
+        <p>The information you submit is used solely to respond to your quote request. It is stored in a secure database (Supabase) accessible only by the portfolio author. It is not sold, shared with third parties, or used for marketing.</p>
+
+        <h3>Data Retention</h3>
+        <p>Since this is a portfolio demonstration, submitted data is retained indefinitely for demonstration purposes. In a real deployment, a retention period and deletion process would be defined.</p>
+
+        <h3>Your Rights</h3>
+        <p>Under applicable data protection laws (including Brazil's LGPD, GDPR, and CCPA), you may have the right to access, correct, or request deletion of your personal data. Because this is a fictional project with no real business entity, there is no formal data protection officer. The portfolio author can be contacted via the case study link in the footer for any data-related requests.</p>
+
+        <h3>Third-Party Services</h3>
+        <p>This website uses Supabase as its database provider to store form submissions. No other third-party services, advertising networks, or tracking tools are used.</p>
+
+        <h3>Security</h3>
+        <p>Form submissions are transmitted over HTTPS to Supabase. Row-level security policies restrict access so that public users can only insert data, not read or modify other submissions.</p>
+
+        <h3>Changes to This Policy</h3>
+        <p>This policy may be updated as the project evolves. Any changes will be reflected on this page with an updated date.</p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--primary" id="privacyCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms of Service modal -->
+  <div class="modal-backdrop" id="termsModal" role="dialog" aria-modal="true" aria-labelledby="terms-title" aria-hidden="true">
+    <div class="modal">
+      <div class="modal__header">
+        <div>
+          <div class="modal__eyebrow">Legal</div>
+          <h2 id="terms-title">Terms of Service</h2>
+        </div>
+        <button class="modal__close" id="termsClose" aria-label="Close terms of service">${icon.x}</button>
+      </div>
+      <div class="modal__body">
+        <p class="modal__updated">Last updated: October 2026</p>
+        <p class="demo-note" style="margin-bottom:1rem;">${icon.info} <span>This is a demonstration terms of service for a fictional portfolio website. It is not legal advice and should not be used for a real business without review by a qualified professional.</span></p>
+
+        <h3>Nature of This Website</h3>
+        <p>NorthStar Cleaning is a fictional business name used solely for portfolio demonstration. The services, pricing, testimonials, and contact details displayed on this website are illustrative and do not represent an actual business offering.</p>
+
+        <h3>No Real Services Provided</h3>
+        <p>This website does not sell products, process payments, or provide cleaning services. The pricing plans shown are illustrative concepts. The contact form does not result in a real service booking.</p>
+
+        <h3>Use of the Contact Form</h3>
+        <p>By submitting the contact form, you acknowledge that your submission is part of a portfolio demonstration and that the information you provide will be stored for demonstration purposes. Please do not submit real personal information if you are uncomfortable with it being stored.</p>
+
+        <h3>Intellectual Property</h3>
+        <p>The website design, code, and content are created by the portfolio author. Stock photography is sourced from Pexels under the Pexels License. Icons are inline SVG created for this project.</p>
+
+        <h3>No Warranties</h3>
+        <p>This website is provided "as is" for demonstration purposes. No guarantees are made about the accuracy, completeness, or availability of the content. The portfolio author is not liable for any damages arising from the use of this demonstration website.</p>
+
+        <h3>External Links</h3>
+        <p>The WhatsApp link and any external links are provided for demonstration. The portfolio author is not responsible for the content or practices of external websites.</p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--primary" id="termsCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
   <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20NorthStar%20Cleaning!%20I'd%20like%20a%20quote." class="whatsapp-fab" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp (demo link)">
     ${icon.whatsapp}
   </a>
@@ -565,13 +667,52 @@ modal.addEventListener('click', (e) => {
   if (e.target === modal) closeModal()
 })
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && modal.classList.contains('modal-backdrop--open')) {
-    closeModal()
+/* ----- Privacy Policy & Terms of Service modals ----- */
+function setupModal(modalEl, closeBtn, closeBtn2, openTrigger) {
+  let lastFocus = null
+  function open() {
+    lastFocus = document.activeElement
+    modalEl.classList.add('modal-backdrop--open')
+    modalEl.setAttribute('aria-hidden', 'false')
+    const first = modalEl.querySelector('button, [href], input, select, textarea')
+    if (first) first.focus()
   }
-  /* Focus trap inside modal */
-  if (e.key === 'Tab' && modal.classList.contains('modal-backdrop--open')) {
-    const focusables = modal.querySelectorAll('button, [href], input, select, textarea')
+  function close() {
+    modalEl.classList.remove('modal-backdrop--open')
+    modalEl.setAttribute('aria-hidden', 'true')
+    if (lastFocus) lastFocus.focus()
+  }
+  openTrigger.addEventListener('click', (e) => { e.preventDefault(); open() })
+  closeBtn.addEventListener('click', close)
+  if (closeBtn2) closeBtn2.addEventListener('click', close)
+  modalEl.addEventListener('click', (e) => { if (e.target === modalEl) close() })
+  modalEl._closeFn = close
+}
+
+const privacyModal = document.getElementById('privacyModal')
+const termsModal = document.getElementById('termsModal')
+
+setupModal(privacyModal, document.getElementById('privacyClose'), document.getElementById('privacyCloseBtn'), document.getElementById('privacyLink'))
+setupModal(termsModal, document.getElementById('termsClose'), document.getElementById('termsCloseBtn'), document.getElementById('termsLink'))
+setupModal(privacyModal, document.getElementById('privacyClose'), document.getElementById('privacyCloseBtn'), document.getElementById('formPrivacyLink'))
+
+const allModals = [modal, privacyModal, termsModal]
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (modal.classList.contains('modal-backdrop--open')) {
+      closeModal()
+    } else if (privacyModal.classList.contains('modal-backdrop--open')) {
+      privacyModal._closeFn()
+    } else if (termsModal.classList.contains('modal-backdrop--open')) {
+      termsModal._closeFn()
+    }
+  }
+  /* Focus trap inside any open modal */
+  if (e.key === 'Tab') {
+    const openModal = allModals.find(m => m.classList.contains('modal-backdrop--open'))
+    if (!openModal) return
+    const focusables = openModal.querySelectorAll('button, [href], input, select, textarea')
     const visible = Array.from(focusables).filter(el => el.offsetParent !== null)
     if (visible.length === 0) return
     const first = visible[0]
