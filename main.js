@@ -293,7 +293,7 @@ document.querySelector('#app').innerHTML = `
           <p id="form-instructions" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:var(--space-3);">
             Fields marked with <span style="color:var(--error-500)">*</span> are required.
           </p>
-          <div id="formFeedback" class="form-feedback" role="alert" aria-live="polite"></div>
+          <div id="formFeedback" class="form-feedback" role="alert" aria-live="polite" tabindex="-1"></div>
           <div class="form-row">
             <div class="form-group" id="fg-name">
               <label for="cf-name">Full Name <span style="color:var(--error-500)">*</span></label>
@@ -394,7 +394,7 @@ document.querySelector('#app').innerHTML = `
     <div class="toast__icon">${icon.checkCircle}</div>
     <div class="toast__body">
       <div class="toast__title">Thanks! Your request has been submitted successfully.</div>
-      <div class="toast__msg" id="toastMsg">This is a simulated submission for a portfolio demo — no real message was sent. <em>Dismiss to return to the form.</em></div>
+      <div class="toast__msg" id="toastMsg">Your request has been received and stored. This is a portfolio demo — no real email is sent. <em>Dismiss to return to the form.</em></div>
     </div>
     <button class="toast__close" id="toastClose" aria-label="Dismiss notification">${icon.x}</button>
   </div>
@@ -566,9 +566,10 @@ document.querySelector('#app').innerHTML = `
     </div>
   </div>
 
-  <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20NorthStar%20Cleaning!%20I'd%20like%20a%20quote." class="whatsapp-fab" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp (demo link)">
+  <button type="button" class="whatsapp-fab whatsapp-fab--disabled" aria-disabled="true" aria-describedby="wa-fab-tip" id="whatsappFab">
     ${icon.whatsapp}
-  </a>
+  </button>
+  <span class="whatsapp-fab__tip" id="wa-fab-tip" role="tooltip">WhatsApp not configured — this is a portfolio demo.</span>
 `
 
 /* Navbar scroll + mobile toggle */
@@ -822,22 +823,29 @@ form.addEventListener('submit', async (e) => {
     return
   }
 
+  if (submitBtn.disabled) return
+
   submitBtn.disabled = true
   submitBtn.textContent = 'Sending…'
 
-  /* Simulated submission — try Supabase but always show demo toast */
-  await new Promise(r => setTimeout(r, 600))
-
   try {
     const { error } = await supabase.from('contact_submissions').insert(data)
-    /* Whether it succeeds or fails, this is a demo — show the toast */
-    void error
-  } catch (err) {
-    /* Demo mode — form interaction is simulated */
-  }
 
-  form.reset()
-  submitBtn.disabled = false
-  submitBtn.textContent = 'Send Request'
-  showToastWithTimer(data.name.split(' ')[0])
+    if (error) {
+      throw new Error(error.message || 'Database error')
+    }
+
+    form.reset()
+    submitBtn.disabled = false
+    submitBtn.textContent = 'Send Request'
+    showToastWithTimer(data.name.split(' ')[0])
+  } catch (err) {
+    submitBtn.disabled = false
+    submitBtn.textContent = 'Send Request'
+    feedback.classList.add('form-feedback--error')
+    feedback.textContent = 'Something went wrong submitting your request. Please try again or email us directly.'
+    const firstError = form.querySelector('.form-group--error .form-control')
+    if (firstError) firstError.focus()
+    else feedback.focus()
+  }
 })
