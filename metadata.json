@@ -1,0 +1,8 @@
+{
+  "name": "NorthStar Cleaning",
+  "description": "Professional residential and commercial cleaning service showcase website featuring service tiers, transparent pricing, interactive quote requests, and customer reviews.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

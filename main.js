@@ -6,10 +6,33 @@ const PHONE_DISPLAY = '+1 (555) 123-4567'
 const EMAIL_DISPLAY = 'hello@northstarcleaning.com'
 const ADDRESS_DISPLAY = '48 Market Street, Boston, MA 02108'
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+let supabase = null
+
+if (supabaseUrl && supabaseAnonKey) {
+  try {
+    supabase = createClient(supabaseUrl, supabaseAnonKey)
+  } catch (err) {
+    console.warn('[NorthStar Cleaning] Supabase initialization warning:', err)
+  }
+}
+
+if (!supabase) {
+  const inMemorySubmissions = []
+  supabase = {
+    from: (table) => ({
+      insert: async (data) => {
+        const rows = Array.isArray(data) ? data : [data]
+        inMemorySubmissions.push(...rows.map(item => ({ ...item, id: Date.now(), created_at: new Date().toISOString() })))
+        console.info(`[NorthStar Cleaning (In-Memory DB)] Saved to ${table}:`, rows)
+        return { data: rows, error: null }
+      },
+      select: async () => ({ data: inMemorySubmissions, error: null }),
+    }),
+  }
+}
 
 const icon = {
   star: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
@@ -232,7 +255,7 @@ document.querySelector('#app').innerHTML = `
             <ul class="price-card__features">
               ${p.features.map(f => `<li>${icon.check} <span>${f}</span></li>`).join('')}
             </ul>
-            <a href="#contact" class="btn ${p.featured ? 'btn--primary' : 'btn--ghost'} btn--block">Choose ${p.name}</a>
+            <a href="#contact" data-plan="${p.name} Plan (${p.price})" class="btn ${p.featured ? 'btn--primary' : 'btn--ghost'} btn--block plan-select-btn">Choose ${p.name}</a>
           </article>`).join('')}
       </div>
     </div>
@@ -297,33 +320,46 @@ document.querySelector('#app').innerHTML = `
           <div class="form-row">
             <div class="form-group" id="fg-name">
               <label for="cf-name">Full Name <span style="color:var(--error-500)">*</span></label>
-              <input type="text" id="cf-name" name="name" class="form-control" placeholder="Jane Doe" required autocomplete="name" aria-describedby="err-name" />
+              <input type="text" id="cf-name" name="name" class="form-control" placeholder="Jane Doe" required autocomplete="name" maxlength="100" aria-describedby="err-name" />
               <span class="form-group__error" id="err-name">${icon.alertCircle} Please enter your name.</span>
             </div>
             <div class="form-group" id="fg-phone">
               <label for="cf-phone">Phone</label>
-              <input type="tel" id="cf-phone" name="phone" class="form-control" placeholder="+1 (555) 000-0000" autocomplete="tel" />
+              <input type="tel" id="cf-phone" name="phone" class="form-control" placeholder="+1 (555) 000-0000" autocomplete="tel" maxlength="30" aria-describedby="err-phone" />
+              <span class="form-group__error" id="err-phone">${icon.alertCircle} Please enter a valid phone number.</span>
             </div>
           </div>
           <div class="form-group" id="fg-email">
             <label for="cf-email">Email <span style="color:var(--error-500)">*</span></label>
-            <input type="email" id="cf-email" name="email" class="form-control" placeholder="jane@example.com" required autocomplete="email" aria-describedby="err-email" />
+            <input type="email" id="cf-email" name="email" class="form-control" placeholder="jane@example.com" required autocomplete="email" maxlength="120" aria-describedby="err-email" />
             <span class="form-group__error" id="err-email">${icon.alertCircle} Please enter a valid email address.</span>
           </div>
-          <div class="form-group">
-            <label for="cf-service">Service of Interest</label>
+          <div class="form-group" id="fg-service">
+            <label for="cf-service">Service or Plan of Interest</label>
             <select id="cf-service" name="service" class="form-control">
-              <option value="">Select a service…</option>
-              <option>Residential Cleaning</option>
-              <option>Commercial Cleaning</option>
-              <option>Deep Cleaning</option>
-              <option>Not sure yet</option>
+              <option value="">Select a service or plan…</option>
+              <optgroup label="Standard Services">
+                <option value="Residential Cleaning">Residential Cleaning</option>
+                <option value="Commercial Cleaning">Commercial Cleaning</option>
+                <option value="Deep Cleaning">Deep Cleaning</option>
+              </optgroup>
+              <optgroup label="Recurring Plans">
+                <option value="Essential Plan ($89)">Essential Plan ($89)</option>
+                <option value="Professional Plan ($149)">Professional Plan ($149)</option>
+                <option value="Premium Plan ($229)">Premium Plan ($229)</option>
+              </optgroup>
+              <option value="Not sure yet">Not sure yet</option>
             </select>
           </div>
           <div class="form-group" id="fg-message">
             <label for="cf-message">Message <span style="color:var(--error-500)">*</span></label>
-            <textarea id="cf-message" name="message" class="form-control" placeholder="Tell us about your space, size, and any special requests…" required aria-describedby="err-message"></textarea>
+            <textarea id="cf-message" name="message" class="form-control" placeholder="Tell us about your space, size, and any special requests…" required maxlength="1500" aria-describedby="err-message"></textarea>
             <span class="form-group__error" id="err-message">${icon.alertCircle} Please enter a message.</span>
+          </div>
+          <!-- Anti-spam honeypot (invisible to humans and screen readers) -->
+          <div style="display:none!important;" aria-hidden="true">
+            <label for="cf-website">Website</label>
+            <input type="text" id="cf-website" name="website_hp" tabindex="-1" autocomplete="off" />
           </div>
           <p class="form-privacy-notice">
             By submitting this form, your name, email, phone (if provided), service interest, and message will be stored to respond to your inquiry. See our <button type="button" class="link-button" id="formPrivacyLink">Privacy Policy</button> for details.
@@ -390,7 +426,7 @@ document.querySelector('#app').innerHTML = `
   <aside class="portfolio-badge" aria-label="Portfolio attribution">Portfolio Concept · Rafael Douglas</aside>
 
   <!-- Success toast -->
-  <div class="toast" id="successToast" role="alert" aria-live="polite" aria-atomic="true">
+  <div class="toast" id="successToast" role="status" aria-live="polite" aria-atomic="true">
     <div class="toast__icon">${icon.checkCircle}</div>
     <div class="toast__body">
       <div class="toast__title">Thanks! Your request has been submitted successfully.</div>
@@ -566,10 +602,10 @@ document.querySelector('#app').innerHTML = `
     </div>
   </div>
 
-  <button type="button" class="whatsapp-fab whatsapp-fab--disabled" aria-disabled="true" aria-describedby="wa-fab-tip" id="whatsappFab">
+  <button type="button" class="whatsapp-fab whatsapp-fab--disabled" aria-label="WhatsApp" aria-controls="wa-fab-tip" aria-expanded="false" aria-describedby="wa-fab-tip" id="whatsappFab">
     ${icon.whatsapp}
   </button>
-  <span class="whatsapp-fab__tip" id="wa-fab-tip" role="tooltip">WhatsApp not configured — this is a portfolio demo.</span>
+  <span class="whatsapp-fab__tip" id="wa-fab-tip" role="status" aria-live="polite">WhatsApp not configured — this is a portfolio demo.</span>
 `
 
 /* Navbar scroll + mobile toggle */
@@ -759,12 +795,29 @@ function clearFieldErrorOnInput(field, groupId) {
 }
 
 const nameField = form.name
+const phoneField = form.phone
 const emailField = form.email
 const messageField = form.message
 
 clearFieldErrorOnInput(nameField, 'fg-name')
+clearFieldErrorOnInput(phoneField, 'fg-phone')
 clearFieldErrorOnInput(emailField, 'fg-email')
 clearFieldErrorOnInput(messageField, 'fg-message')
+
+/* Plan selection buttons -> pre-select in contact form */
+document.querySelectorAll('.plan-select-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const plan = btn.getAttribute('data-plan')
+    const serviceSelect = document.getElementById('cf-service')
+    if (serviceSelect && plan) {
+      serviceSelect.value = plan
+      serviceSelect.classList.add('form-control--highlight')
+      setTimeout(() => {
+        serviceSelect.classList.remove('form-control--highlight')
+      }, 1800)
+    }
+  })
+})
 
 function showToast(name) {
   const title = toast.querySelector('.toast__title')
@@ -792,10 +845,19 @@ form.addEventListener('submit', async (e) => {
   feedback.className = 'form-feedback'
   feedback.textContent = ''
 
+  // Anti-spam honeypot verification
+  if (form.website_hp && form.website_hp.value) {
+    form.reset()
+    submitBtn.disabled = false
+    submitBtn.textContent = 'Send Request'
+    showToastWithTimer('Guest')
+    return
+  }
+
   const data = {
     name: nameField.value.trim(),
     email: emailField.value.trim(),
-    phone: form.phone.value.trim() || null,
+    phone: phoneField.value.trim() || null,
     service: form.service.value || null,
     message: messageField.value.trim(),
   }
@@ -821,6 +883,18 @@ form.addEventListener('submit', async (e) => {
     feedback.textContent = 'Please enter a valid email address.'
     emailField.focus()
     return
+  }
+
+  if (data.phone) {
+    const digitsOnly = data.phone.replace(/\D/g, '')
+    const phoneValid = /^[0-9+()\s.-]+$/.test(data.phone) && digitsOnly.length >= 7 && digitsOnly.length <= 15
+    if (!phoneValid) {
+      setFieldError('fg-phone', phoneField)
+      feedback.classList.add('form-feedback--error')
+      feedback.textContent = 'Please enter a valid phone number.'
+      phoneField.focus()
+      return
+    }
   }
 
   if (submitBtn.disabled) return
@@ -849,3 +923,61 @@ form.addEventListener('submit', async (e) => {
     else feedback.focus()
   }
 })
+
+/* ----- WhatsApp button touch/click feedback (mobile & accessible demo) ----- */
+const whatsappFab = document.getElementById('whatsappFab')
+const waTip = document.getElementById('wa-fab-tip')
+const WA_DEMO_MESSAGE = 'WhatsApp not configured — this is a portfolio demo.'
+let waTipTimer = null
+
+function showWaTip() {
+  if (!waTip || !whatsappFab) return
+  whatsappFab.setAttribute('aria-expanded', 'true')
+  waTip.classList.add('whatsapp-fab__tip--visible')
+
+  // Dynamic content update so assistive technologies reliably announce the status change
+  waTip.textContent = ''
+  requestAnimationFrame(() => {
+    waTip.textContent = WA_DEMO_MESSAGE
+  })
+
+  if (waTipTimer) clearTimeout(waTipTimer)
+  waTipTimer = setTimeout(() => {
+    hideWaTip()
+  }, 4000)
+}
+
+function hideWaTip() {
+  if (!waTip || !whatsappFab) return
+  if (waTipTimer) clearTimeout(waTipTimer)
+  whatsappFab.setAttribute('aria-expanded', 'false')
+  waTip.classList.remove('whatsapp-fab__tip--visible')
+}
+
+if (whatsappFab && waTip) {
+  whatsappFab.addEventListener('click', (e) => {
+    e.preventDefault()
+    const isExpanded = whatsappFab.getAttribute('aria-expanded') === 'true'
+    if (isExpanded) {
+      hideWaTip()
+    } else {
+      showWaTip()
+    }
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && whatsappFab.getAttribute('aria-expanded') === 'true') {
+      hideWaTip()
+    }
+  })
+
+  document.addEventListener('click', (e) => {
+    if (!whatsappFab.contains(e.target) && !waTip.contains(e.target)) {
+      if (whatsappFab.getAttribute('aria-expanded') === 'true') {
+        hideWaTip()
+      }
+    }
+  })
+}
+
+
