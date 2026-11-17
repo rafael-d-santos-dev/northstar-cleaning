@@ -1,5 +1,7 @@
 import './style.css'
+import './assistant.css'
 import { createClient } from '@supabase/supabase-js'
+import { initAssistant } from './assistant.js'
 
 const WHATSAPP_NUMBER = '15551234567'
 const PHONE_DISPLAY = '+1 (555) 123-4567'
@@ -804,18 +806,41 @@ clearFieldErrorOnInput(phoneField, 'fg-phone')
 clearFieldErrorOnInput(emailField, 'fg-email')
 clearFieldErrorOnInput(messageField, 'fg-message')
 
+let serviceHighlightTimer = null
+
+function selectServiceInForm(value, { scroll = false, focus = false } = {}) {
+  const serviceSelect = document.getElementById('cf-service')
+  if (serviceSelect && value) {
+    const hasMatchingOption = Array.from(serviceSelect.options).some(opt => opt.value === value)
+    if (hasMatchingOption) {
+      serviceSelect.value = value
+      serviceSelect.classList.add('form-control--highlight')
+      if (serviceHighlightTimer) clearTimeout(serviceHighlightTimer)
+      serviceHighlightTimer = setTimeout(() => {
+        serviceSelect.classList.remove('form-control--highlight')
+      }, 1800)
+    }
+  }
+
+  if (scroll) {
+    const contactSection = document.getElementById('contact')
+    if (contactSection) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      contactSection.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+    }
+  }
+
+  if (focus) {
+    const focusTarget = value ? serviceSelect : document.getElementById('cf-name')
+    if (focusTarget) focusTarget.focus({ preventScroll: true })
+  }
+}
+
 /* Plan selection buttons -> pre-select in contact form */
 document.querySelectorAll('.plan-select-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const plan = btn.getAttribute('data-plan')
-    const serviceSelect = document.getElementById('cf-service')
-    if (serviceSelect && plan) {
-      serviceSelect.value = plan
-      serviceSelect.classList.add('form-control--highlight')
-      setTimeout(() => {
-        serviceSelect.classList.remove('form-control--highlight')
-      }, 1800)
-    }
+    selectServiceInForm(plan)
   })
 })
 
@@ -979,5 +1004,15 @@ if (whatsappFab && waTip) {
     }
   })
 }
+
+/* ----- Service Advisor widget (Interactive Demo Concept) ----- */
+initAssistant({
+  mountTarget: document.querySelector('#app'),
+  services,
+  plans,
+  icon,
+  onSelectService: (value) => selectServiceInForm(value, { scroll: true, focus: true }),
+})
+
 
 
