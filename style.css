@@ -1297,6 +1297,8 @@ body:has(.toast--visible) { }
   .hero__stat .label { font-size: 0.75rem; }
   .trust__item { font-size: 0.7rem; gap: 0.3rem; }
   .trust__item svg { width: 16px; height: 16px; }
+}
+
 @media (max-width: 480px) {
   .portfolio-badge { display: none; }
 }
