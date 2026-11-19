@@ -1,46 +1,220 @@
-NorthStar Cleaning
+# NorthStar Cleaning
 
-A modern, responsive website concept for a professional cleaning service business.
+A modern, responsive cleaning service website concept designed to demonstrate a professional digital experience for residential and commercial cleaning businesses.
 
-Overview
+**Live Demo:** https://northstar-cleaning.ai.studio
 
-NorthStar Cleaning is a fictional business website created as a portfolio project to demonstrate modern web design, responsive layouts, and user-friendly navigation.
+**Repository:** https://github.com/rafael-d-santos-dev/northstar-cleaning
 
-Features
+> **Portfolio Concept:** NorthStar Cleaning is a fictional business created for portfolio demonstration purposes. Business information, contact details, pricing, statistics, service claims, and customer testimonials are illustrative and do not represent a real company or verified customer experiences.
 
-- Responsive design for desktop and mobile devices
-- Modern homepage with a clear call to action
-- Cleaning services section
-- Pricing section with sample prices
-- Contact and booking form interface
-- Mobile-friendly navigation
+---
 
-Technologies
+## Overview
 
-- HTML
-- CSS
-- JavaScript
+NorthStar Cleaning is a business website concept focused on presenting cleaning services, pricing options, and customer inquiry experiences through a polished and responsive interface.
 
-Update this section to match the technologies actually used in the project.
+The project combines a clean visual identity, clear content hierarchy, conversion-focused sections, and interactive frontend features.
 
-Project Preview
+Its goal is to demonstrate how a traditional service business can be presented through a modern digital experience.
 
-Live Demo: [Add your published website URL here]
+## Features
 
-Screenshots: Add screenshots of the website to this repository to showcase the design and user interface.
+### 1. Responsive Business Website
 
-Project Purpose
+- Responsive desktop and mobile layouts.
+- Mobile navigation with accessible controls.
+- Hero section with primary calls to action.
+- Service highlights and trust indicators.
+- Structured service and pricing sections.
+- Contact information and inquiry interface.
 
-This project was built for portfolio and learning purposes to demonstrate website design, frontend development, and business website structure.
+### 2. Cleaning Services
 
-NorthStar Cleaning is a fictional brand, and the pricing information is for demonstration purposes only.
+Three illustrative service categories:
 
-Development
+- Residential Cleaning
+- Commercial Cleaning
+- Deep Cleaning
 
-This project was developed with assistance from AI-powered development tools.
+Each service includes a description and a list of example features.
 
-Author
+### 3. Pricing Plans
 
-Rafael Douglas
+Three illustrative service plans:
 
-GitHub: "rafael-d-santos-dev" (https://github.com/rafael-d-santos-dev)
+- Essential
+- Professional
+- Premium
+
+Features:
+- Pricing comparison cards.
+- Highlighted recommended plan.
+- Plan selection connected to the inquiry form.
+
+All prices and plan details are fictional demonstration content.
+
+### 4. Interactive Quote Request Form
+
+- Name, email, phone, service, and message fields.
+- Required-field validation.
+- Email and phone format validation.
+- Accessible error feedback.
+- Anti-spam honeypot field.
+- Submission feedback and confirmation state.
+
+The project includes optional Supabase client configuration through environment variables. When Supabase is not configured, a local in-memory fallback is used for demonstration purposes. This fallback does not provide persistent storage.
+
+### 5. NorthStar Service Advisor — Assistant Concept
+
+An interactive conversational guide designed to help visitors explore cleaning services and pricing options.
+
+Features:
+- Interactive conversation interface.
+- Service and plan recommendations.
+- Dynamic recommendation cards based on existing project data.
+- Service selection connected to the quote request form.
+- Reset and close controls.
+- Accessible dialog semantics and live message announcements.
+
+> **Important:** The Service Advisor is a predefined interactive concept, not a live AI integration. It does not use an LLM, external AI API, or remote knowledge base.
+
+### 6. Additional Interactions
+
+- WhatsApp contact interface with explicit demo feedback.
+- Pricing selection and form handoff.
+- Interactive feedback notifications.
+- Scroll-based reveal effects.
+- Responsive navigation behavior.
+
+Contact information and communication endpoints are illustrative placeholders. No real WhatsApp conversation or business communication is configured.
+
+---
+
+## Technology Stack
+
+- **Vite** — Development server and production bundler.
+- **JavaScript (ES Modules)** — Application logic and interactions.
+- **HTML5** — Semantic page structure.
+- **CSS3** — Responsive layouts, visual styling, and animations.
+- **Supabase JavaScript Client** — Optional database client integration.
+
+The application uses a lightweight frontend architecture without a React framework.
+
+## Project Structure
+
+```text
+northstar-cleaning/
+├── index.html
+├── main.js
+├── assistant.js
+├── style.css
+├── assistant.css
+├── package.json
+├── package-lock.json
+└── public/
+    └── images/
+```
+
+The project may contain additional assets and configuration files depending on the current repository version.
+
+## Getting Started
+
+### Requirements
+
+- Node.js
+- npm
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development
+
+```bash
+npm run dev
+```
+
+### Production Build
+
+```bash
+npm run build
+```
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+## Optional Supabase Configuration
+
+The application supports optional Supabase client initialization through environment variables:
+
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Without these variables, the application uses an in-memory demonstration fallback.
+
+A production implementation would require a properly configured database, table schema, Row Level Security policies, and appropriate validation and security controls.
+
+Never expose a Supabase service-role key in frontend environment variables.
+
+## Accessibility & Responsive Design
+
+The project includes accessibility considerations such as:
+
+- Semantic HTML structure.
+- Skip navigation link.
+- Accessible mobile navigation controls.
+- Form labels and validation feedback.
+- Keyboard interaction support.
+- ARIA attributes for interactive components.
+- Dialog semantics for the Service Advisor.
+- Live announcements for dynamic feedback.
+- Responsive layouts for mobile and desktop.
+
+These implementations do not replace a complete accessibility audit with assistive technologies.
+
+## Before Real-World Use
+
+Before adapting this concept for an actual cleaning business, the following would be necessary:
+
+- Replace fictional business information and contact details.
+- Replace illustrative prices and service descriptions.
+- Obtain permission for production imagery.
+- Replace sample testimonials with genuine customer feedback and consent.
+- Configure and secure the production database.
+- Implement appropriate data protection and privacy practices.
+- Connect real communication and booking channels.
+- Review all business claims and service guarantees.
+- Perform production security, accessibility, and performance testing.
+
+## Project Purpose
+
+NorthStar Cleaning is an independent portfolio project created to demonstrate:
+
+- Business website development.
+- Responsive frontend engineering.
+- Interactive form experiences.
+- Conversion-focused UI design.
+- JavaScript application architecture.
+- Optional database integration.
+- Conversational interface concepts.
+- Accessibility considerations.
+
+This is a fictional portfolio concept, not commissioned client work.
+
+## Author
+
+**Rafael Douglas**
+
+GitHub: https://github.com/rafael-d-santos-dev
+
+## License
+
+This repository is a portfolio demonstration. No open-source license has been granted.
